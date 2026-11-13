@@ -2,145 +2,149 @@
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07110e">
-<title>MAHAN MAP | مدیریت مسیرها</title>
+<title>MAHAN MAP</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
 <style>
-:root{--bg:#07110e;--panel:#0e1b16;--panel2:#12231c;--line:#20382c;--green:#28d17c;--green2:#a2f5c7;--text:#f2fff8;--muted:#9bb5a7;--red:#ff7373;--gold:#f4c96b}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 90% -10%,#153b29 0%,transparent 60%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}
-button,input{font:inherit}button{cursor:pointer}.wrap{max-width:980px;margin:auto;padding:18px 14px 40px}
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 22px}
-.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:linear-gradient(145deg,#39e58e,#087a49);display:grid;place-items:center;color:#03150c;font-size:24px;font-weight:900;box-shadow:0 8px 30px #20d47c30}
-h1{font-size:21px;letter-spacing:1px;margin:0}.sub{color:var(--muted);font-size:12px;margin-top:5px}.pill{border:1px solid #28563f;color:var(--green2);padding:7px 10px;border-radius:99px;font-size:11px;white-space:nowrap}
-.hero{background:linear-gradient(135deg,#123423,#0c1b14 70%);border:1px solid #24533a;border-radius:22px;padding:20px;margin-bottom:16px;position:relative;overflow:hidden}
-.hero:after{content:"⌖";position:absolute;left:18px;top:0;font-size:105px;color:#50e99a12;line-height:1}
-.hero h2{font-size:19px;margin:0 0 8px}.hero p{color:#b8d4c4;font-size:13px;line-height:1.9;margin:0;max-width:650px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 20px}.stat{background:var(--panel);border:1px solid var(--line);padding:13px;border-radius:15px}.stat b{display:block;font-size:21px;color:var(--green2);margin-bottom:5px}.stat span{font-size:11px;color:var(--muted)}
-.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 2px 12px}.section-head h3{font-size:15px;margin:0}.hint{font-size:11px;color:var(--muted)}
-.routes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-.route{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:17px;padding:14px;min-width:0}
-.route-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.num{background:#1a3c2b;color:var(--green2);border-radius:9px;padding:5px 9px;font-size:11px}.status{font-size:10px;color:var(--muted)}.status.ready{color:var(--green2)}
-.route-line{display:flex;align-items:center;gap:7px;min-height:47px}.place{font-size:13px;font-weight:bold;min-width:0}.place small{display:block;color:var(--muted);font-size:10px;font-weight:normal;margin-top:5px}.arrow{color:var(--green);font-size:18px;flex:0 0 auto}
-.actions{display:flex;gap:7px;margin-top:13px}.btn{border:1px solid var(--line);background:#172920;color:var(--text);padding:10px 11px;border-radius:11px;font-size:11px}.btn.primary{background:var(--green);color:#042012;border-color:var(--green);font-weight:bold}.btn:disabled{opacity:.35;cursor:not-allowed}.actions .btn{flex:1}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;margin-top:15px}
-.point-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.point{background:#12231c;border:1px solid #20382c;border-radius:12px;padding:10px;min-width:0}.point b{font-size:12px;display:block;margin-bottom:6px}.point span{font-size:10px;color:var(--muted);display:block;overflow-wrap:anywhere;line-height:1.6}.point button{margin-top:8px;width:100%;font-size:10px;padding:8px}
-.note{font-size:11px;color:var(--muted);line-height:1.9;margin:10px 2px 0}.notice{background:#2b2514;border:1px solid #594a21;color:#f5dfa0;padding:11px 12px;border-radius:12px;font-size:11px;line-height:1.9;margin-top:14px}
-.modal-back{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:10}.modal-back.show{display:flex}.modal{width:min(100%,520px);background:#0d1b14;border:1px solid #31513e;border-radius:22px;padding:19px;box-shadow:0 20px 70px #0009}.modal h3{margin:0 0 8px;font-size:17px}.modal p{font-size:12px;color:var(--muted);line-height:1.8}.coord{background:#14271d;border-radius:12px;padding:12px;font-size:12px;direction:ltr;text-align:left;margin:12px 0;color:var(--green2);overflow-wrap:anywhere}
-.modal-actions{display:flex;gap:8px;flex-wrap:wrap}.modal-actions .btn{flex:1}
-.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#eafff2;color:#052012;padding:11px 16px;border-radius:99px;font-size:12px;display:none;z-index:20;box-shadow:0 8px 30px #0006;max-width:90%;text-align:center}
-footer{text-align:center;color:#648272;font-size:10px;margin-top:26px}
-@media(max-width:650px){.routes{grid-template-columns:1fr}.point-list{grid-template-columns:repeat(2,minmax(0,1fr))}.wrap{padding:14px 12px 32px}.hero{padding:17px}.stats{gap:7px}.stat{padding:11px 9px}.stat b{font-size:18px}}
+:root{--bg:#07110e;--panel:#0e1b16;--panel2:#12231c;--line:#20382c;--green:#28d17c;--mint:#a2f5c7;--text:#f2fff8;--muted:#9bb5a7;--danger:#ff7777;--gold:#f4c96b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(900px 500px at 90% -10%,#153b29 0%,transparent 60%),var(--bg);color:var(--text);font-family:Tahoma,Arial,sans-serif;min-height:100vh}button,input,select{font:inherit}button{cursor:pointer}
+.wrap{max-width:1050px;margin:auto;padding:15px 13px 40px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 18px}.brand{display:flex;align-items:center;gap:11px}.logo{width:45px;height:45px;border-radius:15px;background:linear-gradient(145deg,#39e58e,#087a49);display:grid;place-items:center;color:#03150c;font-size:24px;font-weight:900;box-shadow:0 8px 30px #20d47c30}h1{font-size:20px;letter-spacing:1px;margin:0}.sub{color:var(--muted);font-size:11px;margin-top:5px}.pill{border:1px solid #28563f;color:var(--mint);padding:7px 10px;border-radius:99px;font-size:10px;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#123423,#0c1b14 70%);border:1px solid #24533a;border-radius:21px;padding:18px;margin-bottom:14px}.hero h2{font-size:18px;margin:0 0 7px}.hero p{color:#b8d4c4;font-size:12px;line-height:1.9;margin:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:13px 0 18px}.stat{background:var(--panel);border:1px solid var(--line);padding:12px;border-radius:14px}.stat b{display:block;font-size:20px;color:var(--mint);margin-bottom:4px}.stat span{font-size:10px;color:var(--muted)}
+.tabs{display:flex;gap:7px;overflow:auto;padding:2px 0 10px;scrollbar-width:none}.tab{white-space:nowrap;background:#102019;color:var(--muted);border:1px solid var(--line);border-radius:11px;padding:10px 13px;font-size:11px}.tab.active{background:#173c29;border-color:#328b5c;color:var(--mint)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:14px 2px 11px}.section-head h3{font-size:14px;margin:0}.hint{font-size:10px;color:var(--muted)}
+.btn{border:1px solid var(--line);background:#172920;color:var(--text);padding:10px 12px;border-radius:11px;font-size:11px}.btn.primary{background:var(--green);color:#042012;border-color:var(--green);font-weight:bold}.btn.ghost{background:transparent}.btn.danger{color:#ffaaaa;border-color:#633535;background:#291818}.btn.small{padding:8px 9px;font-size:10px}.btn:disabled{opacity:.35;cursor:not-allowed}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.card{background:linear-gradient(145deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:13px;min-width:0}.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}.tag{font-size:10px;color:var(--mint);background:#173c29;border-radius:8px;padding:5px 8px}.muted{color:var(--muted);font-size:10px}.route-title{font-weight:bold;font-size:13px;line-height:1.8}.route-sub{font-size:10px;color:var(--muted);margin-top:5px}.card-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.card-actions .btn{flex:1}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:14px;margin-top:12px}.folder-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}.folder{background:#12231c;border:1px solid var(--line);border-radius:13px;padding:12px;text-align:right;color:var(--text);min-width:0}.folder .emoji{font-size:20px;display:block;margin-bottom:8px}.folder b{font-size:11px;display:block}.folder small{font-size:10px;color:var(--muted)}
+.point-row{display:flex;align-items:center;justify-content:space-between;gap:9px;border-bottom:1px solid #1b3025;padding:11px 0}.point-row:last-child{border:0}.point-name{font-size:12px;font-weight:bold}.point-coord{font-size:10px;color:var(--muted);direction:ltr;text-align:right;margin-top:4px}.point-actions{display:flex;gap:5px;flex-wrap:wrap}
+.field{display:flex;flex-direction:column;gap:6px;margin:10px 0}.field label{font-size:11px;color:var(--muted)}.field input,.field select{width:100%;background:#0a1510;border:1px solid #294334;color:var(--text);border-radius:11px;padding:12px;outline:none;font-size:12px}.field input:focus,.field select:focus{border-color:var(--green)}.row{display:flex;gap:8px}.row>*{flex:1;min-width:0}
+.note{font-size:10px;color:var(--muted);line-height:1.9}.notice{background:#2b2514;border:1px solid #594a21;color:#f5dfa0;padding:10px 12px;border-radius:12px;font-size:10px;line-height:1.9;margin-top:13px}
+.modal-back{position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:10px;z-index:1000}.modal-back.show{display:flex}.modal{width:min(100%,560px);max-height:94vh;overflow:auto;background:#0d1b14;border:1px solid #31513e;border-radius:21px;padding:16px;box-shadow:0 20px 70px #0009}.modal h3{margin:0 0 7px;font-size:16px}.modal p{font-size:11px;color:var(--muted);line-height:1.8;margin:0 0 10px}.modal-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.modal-actions .btn{flex:1}
+#pickMap{height:42vh;min-height:260px;border-radius:13px;border:1px solid var(--line);overflow:hidden;background:#16251c;margin:10px 0}.coord{background:#14271d;border-radius:10px;padding:10px;font-size:11px;direction:ltr;text-align:left;color:var(--mint);overflow-wrap:anywhere}
+.toast{position:fixed;bottom:17px;left:50%;transform:translateX(-50%);background:#eafff2;color:#052012;padding:11px 15px;border-radius:99px;font-size:11px;display:none;z-index:2000;box-shadow:0 8px 30px #0006;max-width:92%;text-align:center}
+.empty{padding:25px 12px;text-align:center;color:var(--muted);font-size:11px;line-height:2}
+footer{text-align:center;color:#648272;font-size:10px;margin-top:24px}
+@media(max-width:650px){.wrap{padding:12px 10px 30px}.grid{grid-template-columns:1fr}.folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:15px}.stats{gap:6px}.stat{padding:10px 8px}.stat b{font-size:18px}.card-actions .btn{font-size:10px;padding:9px 7px}}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header>
- <div class="brand"><div class="logo">⌖</div><div><h1>MAHAN MAP</h1><div class="sub">مدیریت مسیرهای شخصی</div></div></div>
- <div class="pill">نسخه ۱.۰</div>
-</header>
-<section class="hero">
- <h2>مسیرهای خودت، همیشه در دسترس</h2>
- <p>برای هر نقطه یک‌بار در محل حضور داشته باش و موقعیت GPS را ثبت کن. بعد از ثبت مبدأ و مقصد، مسیر را با نقشه دلخواه باز کن.</p>
-</section>
-<div class="stats">
- <div class="stat"><b id="routeCount">۸</b><span>مسیر تعریف‌شده</span></div>
- <div class="stat"><b id="savedCount">۰</b><span>نقطه ثبت‌شده</span></div>
- <div class="stat"><b id="readyCount">۰</b><span>مسیر آماده</span></div>
+<header><div class="brand"><div class="logo">⌖</div><div><h1>MAHAN MAP</h1><div class="sub">دفتر هوشمند مکان‌ها و مسیرها</div></div></div><div class="pill">نسخه پیشرفته ۲.۰</div></header>
+<section class="hero"><h2>همه مقصدها، مرتب و دمِ دست</h2><p>مکان را با GPS ثبت کن، روی نقشه انتخاب کن یا مختصات را دستی وارد کن. مسیرها و پوشه‌ها را خودت مدیریت کن.</p></section>
+<div class="stats"><div class="stat"><b id="statPoints">۰</b><span>مکان ذخیره‌شده</span></div><div class="stat"><b id="statRoutes">۰</b><span>مسیر ذخیره‌شده</span></div><div class="stat"><b id="statFolders">۰</b><span>پوشه</span></div></div>
+<nav class="tabs" id="tabs">
+<button class="tab active" data-page="home">نمای کلی</button><button class="tab" data-page="routes">مسیرها</button><button class="tab" data-page="places">مکان‌ها</button><button class="tab" data-page="folders">پوشه‌ها</button>
+</nav>
+<main id="content"></main>
+<div class="notice">نسخه فعلی اطلاعات را در همین مرورگر ذخیره می‌کند. برای نگهداری آنلاین و استفاده از چند گوشی، در مرحله بعد باید Firebase یا فضای ابری متصل کنیم. نقشه برای نمایش و انتخاب دستی به اینترنت نیاز دارد.</div>
+<footer>MAHAN MAP · مدیریت ساده و حرفه‌ای مکان‌ها</footer>
 </div>
-<div class="section-head"><h3>مسیرهای من</h3><span class="hint">برای ثبت یا مشاهده انتخاب کن</span></div>
-<div class="routes" id="routes"></div>
-<div class="section-head"><h3>مدیریت ۹ نقطه</h3><span class="hint">هر نقطه فقط یک‌بار ثبت می‌شود</span></div>
-<div class="panel">
- <div class="point-list" id="points"></div>
- <p class="note">نقاط مشترک بین مسیرها یکی هستند؛ مثلاً «ماهشهر ۲» که در دو مسیر استفاده می‌شود، فقط یک‌بار مختصات می‌گیرد.</p>
-</div>
-<div class="notice">مهم: اطلاعات این نسخه در حافظه مرورگر همین دستگاه ذخیره می‌شود. پاک‌کردن داده‌های مرورگر یا عوض‌کردن گوشی ممکن است اطلاعات را حذف کند. برای همگام‌سازی بین چند دستگاه بعداً باید فضای ذخیره‌سازی آنلاین اضافه کنیم.</div>
-<footer>MAHAN MAP · ساخته‌شده برای مسیرهای شخصی</footer>
-</div>
-<div class="modal-back" id="modalBack" role="dialog" aria-modal="true">
- <div class="modal">
-  <h3 id="modalTitle">ثبت موقعیت</h3><p id="modalDesc">برای دریافت مختصات، اجازه دسترسی به موقعیت مکانی را بده.</p>
-  <div class="coord" id="coord">هنوز مختصاتی ثبت نشده</div>
-  <div class="modal-actions" id="modalActions"></div>
- </div>
-</div>
-<div class="toast" id="toast"></div>
+<div class="modal-back" id="modalBack"><div class="modal" id="modal"></div></div><div class="toast" id="toast"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script>
 "use strict";
-const POINTS = [
- ["m1","ماهشهر ۱"],["m2","ماهشهر ۲"],["a1","اهواز ۱"],["a2","اهواز ۲"],
- ["e1","اندیمشک ۱"],["e2","اندیمشک ۲"],["k1","خرم‌آباد ۱"],["k2","خرم‌آباد ۲"],["n1","نورآباد"]
+const KEY="mahan_map_pro_v2";
+const initialPlaces=[
+{id:"m1",name:"ماهشهر ۱"},{id:"m2",name:"ماهشهر ۲"},{id:"a1",name:"اهواز ۱"},{id:"a2",name:"اهواز ۲"},
+{id:"e1",name:"اندیمشک ۱"},{id:"e2",name:"اندیمشک ۲"},{id:"k1",name:"خرم‌آباد ۱"},{id:"k2",name:"خرم‌آباد ۲"},{id:"n1",name:"نورآباد"}
 ];
-const ROUTES = [
- ["ماهشهر ۱","ماهشهر ۲","m1","m2"],
- ["ماهشهر ۲","اهواز ۱","m2","a1"],
- ["اهواز ۱","اهواز ۲","a1","a2"],
- ["اهواز ۲","اندیمشک ۱","a2","e1"],
- ["اندیمشک ۱","اندیمشک ۲","e1","e2"],
- ["اندیمشک ۲","خرم‌آباد ۱","e2","k1"],
- ["خرم‌آباد ۱","خرم‌آباد ۲","k1","k2"],
- ["خرم‌آباد ۲","نورآباد","k2","n1"]
+const initialRoutes=[
+{from:"m1",to:"m2"},{from:"m2",to:"a1"},{from:"a1",to:"a2"},{from:"a2",to:"e1"},
+{from:"e1",to:"e2"},{from:"e2",to:"k1"},{from:"k1",to:"k2"},{from:"k2",to:"n1"}
 ];
-const STORAGE_KEY="mahan_map_points_v1";
-let saved={};
-try{saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")||{}}catch(e){saved={}}
-let activePoint=null, pendingCoords=null;
+const defaultFolders=[{id:"saved",name:"مکان‌های ثبت‌شده",icon:"📍"},{id:"visit",name:"برای رفتن",icon:"🧭"},{id:"work",name:"کار و مسیرها",icon:"💼"},{id:"favorite",name:"علاقه‌مندی‌ها",icon:"⭐"}];
+let db;
+try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){db=null}
+if(!db||!Array.isArray(db.places))db={places:initialPlaces.map(p=>({...p,lat:null,lon:null,folder:"saved"})),routes:initialRoutes.map((r,i)=>({...r,id:"r"+(i+1),name:"مسیر "+(i+1)})),folders:defaultFolders};
+db.folders=db.folders?.length?db.folders:defaultFolders;
+db.routes=db.routes||[];db.places=db.places||[];
+let page="home",mapObj=null,pickMarker=null,pickTarget=null,pickLatLng=null;
 const $=id=>document.getElementById(id);
-function persist(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));render()}catch(e){toast("ذخیره‌سازی مرورگر در دسترس نیست.")}}
-function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block";clearTimeout(window.__toastTimer);window.__toastTimer=setTimeout(()=>t.style.display="none",2800)}
-function has(id){return saved[id]&&Number.isFinite(saved[id].lat)&&Number.isFinite(saved[id].lon)}
-function coord(id){return has(id)?`${saved[id].lat.toFixed(6)}, ${saved[id].lon.toFixed(6)}`:"ثبت نشده"}
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const getPlace=id=>db.places.find(p=>p.id===id);
+const located=p=>p&&Number.isFinite(Number(p.lat))&&Number.isFinite(Number(p.lon));
+const coords=p=>located(p)?`${Number(p.lat).toFixed(6)}, ${Number(p.lon).toFixed(6)}`:"موقعیت ثبت نشده";
+const folderName=id=>db.folders.find(f=>f.id===id)?.name||"بدون پوشه";
+function save(){localStorage.setItem(KEY,JSON.stringify(db));render()}
+function toast(s){let t=$("toast");t.textContent=s;t.style.display="block";clearTimeout(window._tt);window._tt=setTimeout(()=>t.style.display="none",2600)}
+function uid(prefix){return prefix+Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function nav(p){page=p;document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===p));render()}
+$("tabs").addEventListener("click",e=>{let b=e.target.closest("[data-page]");if(b)nav(b.dataset.page)});
 function render(){
- $("routes").innerHTML=ROUTES.map((r,i)=>{
-  const ready=has(r[2])&&has(r[3]);
-  return `<article class="route"><div class="route-top"><span class="num">مسیر ${i+1}</span><span class="status ${ready?"ready":""}">${ready?"● آماده مسیریابی":"○ نیازمند ثبت موقعیت"}</span></div>
-  <div class="route-line"><div class="place">${r[0]}<small>مبدأ · ${has(r[2])?"ثبت شده":"ثبت نشده"}</small></div><span class="arrow">←</span><div class="place">${r[1]}<small>مقصد · ${has(r[3])?"ثبت شده":"ثبت نشده"}</small></div></div>
-  <div class="actions"><button class="btn" onclick="openPoint('${r[2]}')">ثبت مبدأ</button><button class="btn" onclick="openPoint('${r[3]}')">ثبت مقصد</button><button class="btn primary" ${ready?"":"disabled"} onclick="openNavigation('${r[2]}','${r[3]}')">مسیریابی</button></div></article>`;
- }).join("");
- $("points").innerHTML=POINTS.map(p=>`<div class="point"><b>${p[1]}</b><span>${coord(p[0])}</span><button class="btn" onclick="openPoint('${p[0]}')">${has(p[0])?"اصلاح موقعیت":"ثبت با GPS"}</button></div>`).join("");
- $("savedCount").textContent=POINTS.filter(p=>has(p[0])).length;
- $("readyCount").textContent=ROUTES.filter(r=>has(r[2])&&has(r[3])).length;
+ $("statPoints").textContent=db.places.filter(located).length;
+ $("statRoutes").textContent=db.routes.length;
+ $("statFolders").textContent=db.folders.length;
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+ const c=$("content");
+ if(page==="home")c.innerHTML=homeHTML();
+ if(page==="routes")c.innerHTML=routesHTML();
+ if(page==="places")c.innerHTML=placesHTML();
+ if(page==="folders")c.innerHTML=foldersHTML();
 }
-function openPoint(id){
- activePoint=id;pendingCoords=null;
- const p=POINTS.find(x=>x[0]===id);$("modalTitle").textContent="ثبت موقعیت "+p[1];
- $("modalDesc").textContent="در محل دقیق این نقطه قرار بگیر و دکمه دریافت GPS را بزن. دقت موقعیت به GPS و شرایط محیط بستگی دارد.";
- $("coord").textContent=has(id)?coord(id):"هنوز مختصاتی ثبت نشده";
- $("modalActions").innerHTML=`<button class="btn primary" onclick="getGPS()">دریافت موقعیت فعلی من</button><button class="btn" onclick="closeModal()">بستن</button>`;
- $("modalBack").classList.add("show");
+function homeHTML(){
+ const ready=db.routes.filter(r=>located(getPlace(r.from))&&located(getPlace(r.to))).length;
+ return `<div class="section-head"><h3>شروع سریع</h3><span class="hint">کارهای پرکاربرد</span></div>
+ <div class="grid">
+ <div class="card"><div class="route-title">📍 ثبت مکان فعلی</div><div class="route-sub">GPS گوشی را بگیر و روی نقشه ببین کجا هستی.</div><div class="card-actions"><button class="btn primary" onclick="currentLocation()">نمایش موقعیت من</button></div></div>
+ <div class="card"><div class="route-title">➕ افزودن مکان جدید</div><div class="route-sub">اسم دلخواه بده و با نقشه یا مختصات ثبتش کن.</div><div class="card-actions"><button class="btn primary" onclick="addPlace()">افزودن مکان</button></div></div>
+ <div class="card"><div class="route-title">🛣️ ساخت مسیر جدید</div><div class="route-sub">از هر مکان ذخیره‌شده به مکان دیگر مسیر بساز.</div><div class="card-actions"><button class="btn primary" onclick="addRoute()">افزودن مسیر</button></div></div>
+ <div class="card"><div class="route-title">📁 ساخت پوشه</div><div class="route-sub">مکان‌ها و مسیرها را دسته‌بندی کن.</div><div class="card-actions"><button class="btn primary" onclick="addFolder()">افزودن پوشه</button></div></div></div>
+ <div class="section-head"><h3>مسیرهای اولیه تو</h3><span class="hint">${ready} مسیر آماده از ${db.routes.length}</span></div>
+ ${db.routes.slice(0,4).map(routeCard).join("")||'<div class="empty">هنوز مسیری ثبت نشده است.</div>'}
+ <div class="section-head"><h3>پوشه‌های تو</h3><button class="btn small" onclick="nav('folders')">مدیریت پوشه‌ها</button></div><div class="folder-grid">${db.folders.map(folderCard).join("")}</div>`;
 }
-function getGPS(){
- if(!navigator.geolocation){toast("مرورگر این دستگاه از GPS پشتیبانی نمی‌کند.");return}
- $("modalDesc").textContent="در حال دریافت موقعیت… لطفاً چند لحظه صبر کن.";
- navigator.geolocation.getCurrentPosition(pos=>{
-  pendingCoords={lat:pos.coords.latitude,lon:pos.coords.longitude,accuracy:pos.coords.accuracy,updatedAt:new Date().toISOString()};
-  $("coord").textContent=`${pendingCoords.lat.toFixed(6)}, ${pendingCoords.lon.toFixed(6)}  · دقت تقریبی ${Math.round(pendingCoords.accuracy)} متر`;
-  $("modalDesc").textContent="موقعیت دریافت شد. اگر در محل درست هستی، ذخیره‌اش کن.";
-  $("modalActions").innerHTML=`<button class="btn primary" onclick="saveGPS()">ذخیره این موقعیت</button><button class="btn" onclick="getGPS()">دریافت دوباره</button><button class="btn" onclick="closeModal()">انصراف</button>`;
- },err=>{
-  const msg=err.code===1?"اجازه GPS داده نشد. از تنظیمات مرورگر اجازه موقعیت مکانی را فعال کن.":err.code===2?"موقعیت پیدا نشد؛ GPS گوشی را روشن کن و دوباره امتحان کن.":"دریافت موقعیت بیش از حد طول کشید؛ دوباره امتحان کن.";
-  $("modalDesc").textContent=msg;
- },{enableHighAccuracy:true,timeout:25000,maximumAge:0});
+function routeCard(r){
+ const a=getPlace(r.from),b=getPlace(r.to),ready=located(a)&&located(b);
+ return `<article class="card"><div class="card-top"><span class="tag">مسیر</span><span class="muted">${ready?"● آماده مسیریابی":"○ ناقص"}</span></div><div class="route-title">${esc(r.name||((a?.name||"؟")+" ← "+(b?.name||"؟")))}</div><div class="route-sub">${esc(a?.name||"مبدأ حذف‌شده")}　←　${esc(b?.name||"مقصد حذف‌شده")}</div><div class="card-actions"><button class="btn" onclick="editRoute('${r.id}')">ویرایش</button><button class="btn primary" ${ready?"":"disabled"} onclick="chooseNavigation('${r.from}','${r.to}')">مسیریابی</button></div></article>`;
 }
-function saveGPS(){if(!pendingCoords)return;saved[activePoint]=pendingCoords;persist();closeModal();toast("موقعیت با موفقیت ذخیره شد.")}
-function closeModal(){$("modalBack").classList.remove("show");activePoint=null;pendingCoords=null}
-function openNavigation(fromId,toId){
- if(!has(fromId)||!has(toId))return;
- const a=saved[fromId],b=saved[toId];
- const dest=`${b.lat},${b.lon}`,origin=`${a.lat},${a.lon}`;
- const google=`https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}&travelmode=driving`;
- const geo=`geo:${dest}?q=${encodeURIComponent(dest)}`;
- const neshan=`https://neshan.org/maps?destination=${encodeURIComponent(dest)}`;
- const balad=`https://balad.ir/`;
- $("modalTitle").textContent="انتخاب مسیریاب";
- $("modalDesc").textContent="یک برنامه را انتخاب کن. گزینه نقشه‌های گوشی تلاش می‌کند برنامه‌های سازگار نصب‌شده را باز کند.";
- $("coord").textContent="مبدأ: "+origin+"  ←  مقصد: "+dest;
- $("modalActions").innerHTML=`<button class="btn primary" onclick="location.href='${geo}'">نقشه‌های گوشی</button><button class="btn" onclick="window.open('${google}','_blank')">Google Maps</button><button class="btn" onclick="window.open('${neshan}','_blank')">نشان</button><button class="btn" onclick="window.open('${balad}','_blank')">بلد</button><button class="btn" onclick="copyRoute('${origin}','${dest}')">کپی مختصات مسیر</button><button class="btn" onclick="closeModal()">بستن</button>`;
- $("modalBack").classList.add("show");
-}
-function copyRoute(a,b){const txt=`مبدأ: ${a}\nمقصد: ${b}`;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(()=>toast("مختصات کپی شد.")).catch(()=>toast(txt))}else{toast(txt)}}
+function routesHTML(){return `<div class="section-head"><h3>همه مسیرها</h3><button class="btn primary" onclick="addRoute()">＋ مسیر جدید</button></div>${db.routes.map(routeCard).join("")||'<div class="empty">هنوز مسیری نداری. یک مسیر جدید بساز.</div>'}`}
+function placesHTML(){return `<div class="section-head"><h3>همه مکان‌ها</h3><button class="btn primary" onclick="addPlace()">＋ مکان جدید</button></div>${db.places.map(p=>`<div class="panel"><div class="point-row"><div><div class="point-name">${esc(p.name)}</div><div class="point-coord">${esc(coords(p))}</div><div class="muted" style="margin-top:5px">پوشه: ${esc(folderName(p.folder))}</div></div><div class="point-actions"><button class="btn small" onclick="openPlaceMap('${p.id}')">نقشه</button><button class="btn small" onclick="editPlace('${p.id}')">ویرایش</button></div></div></div>`).join("")||'<div class="empty">هنوز مکانی ثبت نشده است.</div>'}`}
+function folderCard(f){let n=db.places.filter(p=>p.folder===f.id).length;return `<button class="folder" onclick="showFolder('${f.id}')"><span class="emoji">${esc(f.icon||"📁")}</span><b>${esc(f.name)}</b><small>${n} مکان</small></button>`}
+function foldersHTML(){return `<div class="section-head"><h3>پوشه‌های من</h3><button class="btn primary" onclick="addFolder()">＋ پوشه جدید</button></div><div class="folder-grid">${db.folders.map(f=>`<div class="folder"><span class="emoji">${esc(f.icon||"📁")}</span><b>${esc(f.name)}</b><small>${db.places.filter(p=>p.folder===f.id).length} مکان</small><div class="card-actions"><button class="btn small" onclick="showFolder('${f.id}')">بازکردن</button><button class="btn small" onclick="editFolder('${f.id}')">ویرایش</button></div></div>`).join("")}</div>`}
+function showFolder(id){let f=db.folders.find(x=>x.id===id);if(!f)return;let ps=db.places.filter(p=>p.folder===id);openModal(`<h3>${esc(f.icon||"📁")} ${esc(f.name)}</h3><p>مکان‌های داخل این پوشه</p>${ps.map(p=>`<div class="point-row"><div><b>${esc(p.name)}</b><div class="point-coord">${esc(coords(p))}</div></div><button class="btn small" onclick="closeModal();openPlaceMap('${p.id}')">نقشه</button></div>`).join("")||'<div class="empty">این پوشه هنوز خالی است.</div>'}<div class="modal-actions"><button class="btn" onclick="closeModal()">بستن</button></div>`)}
+function openModal(html){$("modal").innerHTML=html;$("modalBack").classList.add("show")}
+function closeModal(){ $("modalBack").classList.remove("show");if(mapObj){mapObj.remove();mapObj=null;pickMarker=null}}
 $("modalBack").addEventListener("click",e=>{if(e.target===$("modalBack"))closeModal()});
+function addFolder(){openModal(`<h3>ساخت پوشه</h3><div class="field"><label>نام پوشه</label><input id="fName" placeholder="مثلاً سفرها، کار، برای رفتن"></div><div class="field"><label>نشانه پوشه</label><select id="fIcon"><option>📁</option><option>🧭</option><option>⭐</option><option>🏠</option><option>💼</option><option>🚗</option><option>❤️</option></select></div><div class="modal-actions"><button class="btn primary" onclick="saveFolder()">ساخت پوشه</button><button class="btn" onclick="closeModal()">انصراف</button></div>`)}
+function saveFolder(){let n=$("fName").value.trim();if(!n)return toast("نام پوشه را وارد کن.");db.folders.push({id:uid("f"),name:n,icon:$("fIcon").value});closeModal();save();toast("پوشه ساخته شد.")}
+function editFolder(id){let f=db.folders.find(x=>x.id===id);if(!f)return;openModal(`<h3>ویرایش پوشه</h3><div class="field"><label>نام</label><input id="fName" value="${esc(f.name)}"></div><div class="field"><label>نشانه</label><input id="fIcon" value="${esc(f.icon||"📁")}"></div><div class="modal-actions"><button class="btn primary" onclick="updateFolder('${id}')">ذخیره</button><button class="btn danger" onclick="deleteFolder('${id}')">حذف پوشه</button></div>`)}
+function updateFolder(id){let f=db.folders.find(x=>x.id===id);f.name=$("fName").value.trim()||f.name;f.icon=$("fIcon").value||"📁";closeModal();save()}
+function deleteFolder(id){if(["saved","visit","work","favorite"].includes(id))return toast("پوشه پیش‌فرض حذف نمی‌شود؛ می‌توانی نامش را تغییر بدهی.");if(!confirm("پوشه حذف شود؟ مکان‌های داخل آن به پوشه مکان‌های ثبت‌شده منتقل می‌شوند."))return;db.places.forEach(p=>{if(p.folder===id)p.folder="saved"});db.folders=db.folders.filter(f=>f.id!==id);closeModal();save()}
+function addPlace(){placeForm(null)}
+function editPlace(id){placeForm(getPlace(id))}
+function placeForm(p){let isNew=!p;let v=p||{name:"",folder:"saved",lat:"",lon:""};openModal(`<h3>${isNew?"افزودن مکان جدید":"ویرایش مکان"}</h3><div class="field"><label>نام مکان</label><input id="pName" value="${esc(v.name)}" placeholder="مثلاً خانه، محل کار، ماهشهر ۳"></div><div class="field"><label>پوشه</label><select id="pFolder">${db.folders.map(f=>`<option value="${f.id}" ${v.folder===f.id?"selected":""}>${esc(f.icon||"📁")} ${esc(f.name)}</option>`).join("")}</select></div><div class="row"><div class="field"><label>عرض جغرافیایی (Latitude)</label><input id="pLat" inputmode="decimal" value="${v.lat??""}" placeholder="مثلاً 31.3183"></div><div class="field"><label>طول جغرافیایی (Longitude)</label><input id="pLon" inputmode="decimal" value="${v.lon??""}" placeholder="مثلاً 48.6706"></div></div><div class="modal-actions"><button class="btn primary" onclick="savePlace('${p?.id||""}')">ذخیره مکان</button><button class="btn" onclick="openPicker('${p?.id||""}')">انتخاب روی نقشه</button><button class="btn" onclick="getGPSForForm()">GPS فعلی</button>${p?`<button class="btn danger" onclick="deletePlace('${p.id}')">حذف</button>`:""}<button class="btn ghost" onclick="closeModal()">انصراف</button></div><p class="note">می‌توانی مختصات را دستی وارد کنی، روی نقشه انتخاب کنی یا GPS گوشی را بگیری.</p>`)}
+function savePlace(id){let name=$("pName").value.trim();if(!name)return toast("اسم مکان را وارد کن.");let lat=$("pLat").value.trim(),lon=$("pLon").value.trim();if((lat&&!lon)||(!lat&&lon))return toast("هر دو مختصات را وارد کن.");if(lat&&(!Number.isFinite(+lat)||!Number.isFinite(+lon)||Math.abs(+lat)>90||Math.abs(+lon)>180))return toast("مختصات معتبر نیست.");let p=id?getPlace(id):{id:uid("p")};p.name=name;p.folder=$("pFolder").value;p.lat=lat?+lat:null;p.lon=lon?+lon:null;if(!id)db.places.push(p);closeModal();save();toast("مکان ذخیره شد.")}
+function deletePlace(id){if(!confirm("این مکان حذف شود؟ مسیرهایی که از آن استفاده می‌کنند باقی می‌مانند اما نیاز به اصلاح دارند."))return;db.places=db.places.filter(p=>p.id!==id);closeModal();save()}
+function addRoute(){routeForm(null)}
+function editRoute(id){routeForm(db.routes.find(r=>r.id===id))}
+function routeForm(r){let pOpts=db.places.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join("");openModal(`<h3>${r?"ویرایش مسیر":"ساخت مسیر جدید"}</h3><div class="field"><label>نام مسیر (اختیاری)</label><input id="rName" value="${esc(r?.name||"")}" placeholder="مثلاً خانه تا محل کار"></div><div class="field"><label>مبدأ</label><select id="rFrom">${pOpts}</select></div><div class="field"><label>مقصد</label><select id="rTo">${pOpts}</select></div><div class="modal-actions"><button class="btn primary" onclick="saveRoute('${r?.id||""}')">ذخیره مسیر</button>${r?`<button class="btn danger" onclick="deleteRoute('${r.id}')">حذف مسیر</button>`:""}<button class="btn" onclick="closeModal()">انصراف</button></div>`);if(r){$("rFrom").value=r.from;$("rTo").value=r.to}}
+function saveRoute(id){let from=$("rFrom").value,to=$("rTo").value;if(!from||!to||from===to)return toast("مبدأ و مقصد متفاوت انتخاب کن.");let r=id?db.routes.find(x=>x.id===id):{id:uid("r")};r.from=from;r.to=to;r.name=$("rName").value.trim()||`${getPlace(from).name} ← ${getPlace(to).name}`;if(!id)db.routes.push(r);closeModal();save();toast("مسیر ذخیره شد.")}
+function deleteRoute(id){if(!confirm("این مسیر حذف شود؟"))return;db.routes=db.routes.filter(r=>r.id!==id);closeModal();save()}
+function getGPSForForm(){if(!navigator.geolocation)return toast("GPS در این مرورگر پشتیبانی نمی‌شود.");toast("در حال دریافت GPS…");navigator.geolocation.getCurrentPosition(pos=>{if($("pLat"))$("pLat").value=pos.coords.latitude.toFixed(7);if($("pLon"))$("pLon").value=pos.coords.longitude.toFixed(7);toast("موقعیت دریافت شد؛ برای ثبت، ذخیره مکان را بزن.")},geoError,{enableHighAccuracy:true,timeout:25000,maximumAge:0})}
+function geoError(e){toast(e.code===1?"اجازه مکان‌یابی داده نشد.":e.code===2?"موقعیت پیدا نشد؛ GPS را روشن کن.":"دریافت GPS زمان‌بر شد؛ دوباره تلاش کن.")}
+function currentLocation(){if(!navigator.geolocation)return toast("GPS پشتیبانی نمی‌شود.");toast("در حال پیدا کردن موقعیت فعلی…");navigator.geolocation.getCurrentPosition(pos=>{let lat=pos.coords.latitude,lon=pos.coords.longitude;showMap(lat,lon,`موقعیت فعلی من · دقت حدود ${Math.round(pos.coords.accuracy)} متر`,false)},geoError,{enableHighAccuracy:true,timeout:25000,maximumAge:0})}
+function openPlaceMap(id){let p=getPlace(id);if(!located(p))return toast("این مکان هنوز مختصات ندارد.");showMap(+p.lat,+p.lon,p.name,false)}
+function openPicker(id){let lat=+$("pLat").value,lon=+$("pLon").value;let has=Number.isFinite(lat)&&Number.isFinite(lon)&&$("pLat").value!==""&&$("pLon").value!=="";showMap(has?lat:32.4,has?lon:53.7,"انتخاب محل روی نقشه",true,id)}
+function showMap(lat,lon,title,picking,targetId){
+ pickTarget=targetId||null;pickLatLng=picking?{lat, lng:lon}:null;
+ openModal(`<h3>${esc(title)}</h3><p>${picking?"روی نقشه بزن تا نشانگر در همان نقطه قرار بگیرد؛ می‌توانی نشانگر را هم جابه‌جا کنی.":"موقعیت روی نقشه نمایش داده شده است."}</p><div id="pickMap"></div><div class="coord" id="mapCoord">${lat.toFixed(6)}, ${lon.toFixed(6)}</div><div class="modal-actions">${picking?'<button class="btn primary" onclick="usePickedLocation()">ثبت این نقطه</button>':''}<button class="btn" onclick="openExternalMap(${lat},${lon})">بازکردن در نشان</button><button class="btn" onclick="openGoogle(${lat},${lon})">Google Maps</button><button class="btn" onclick="closeModal()">بستن</button></div>`);
+ if(typeof L==="undefined"){$("pickMap").innerHTML='<div class="empty">نقشه بارگذاری نشد. اتصال اینترنت را بررسی کن؛ می‌توانی مختصات را دستی وارد کنی.</div>';return}
+ mapObj=L.map("pickMap").setView([lat,lon],picking?Math.max(13,lat===32.4?5:13):15);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(mapObj);
+ pickMarker=L.marker([lat,lon],{draggable:!!picking}).addTo(mapObj);
+ const update=ll=>{pickLatLng=ll;$("mapCoord").textContent=ll.lat.toFixed(7)+", "+ll.lng.toFixed(7)};
+ if(picking){mapObj.on("click",e=>{pickMarker.setLatLng(e.latlng);update(e.latlng)});pickMarker.on("dragend",()=>update(pickMarker.getLatLng()));}
+ setTimeout(()=>mapObj&&mapObj.invalidateSize(),250);
+}
+function usePickedLocation(){if(!pickLatLng)return toast("اول یک نقطه روی نقشه انتخاب کن.");$("pLat").value=pickLatLng.lat.toFixed(7);$("pLon").value=pickLatLng.lng.toFixed(7);closeModal();toast("مختصات به فرم مکان منتقل شد؛ ذخیره مکان را بزن.")}
+function openExternalMap(lat,lon){window.open("https://neshan.org/maps?lat="+encodeURIComponent(lat)+"&lng="+encodeURIComponent(lon)," _blank")}
+function openGoogle(lat,lon){window.open("https://www.google.com/maps?q="+lat+","+lon,"_blank")}
+function chooseNavigation(fromId,toId){let a=getPlace(fromId),b=getPlace(toId);if(!located(a)||!located(b))return toast("ابتدا مختصات مبدأ و مقصد را ثبت کن.");openModal(`<h3>مسیریابی</h3><p>${esc(a.name)} ← ${esc(b.name)}</p><div class="coord">مبدأ: ${coords(a)}<br>مقصد: ${coords(b)}</div><div class="modal-actions"><button class="btn primary" onclick="openGoogleRoute('${fromId}','${toId}')">Google Maps</button><button class="btn" onclick="openNeshanRoute('${fromId}','${toId}')">نشان</button><button class="btn" onclick="openBaladRoute('${fromId}','${toId}')">بلد</button><button class="btn" onclick="copyCoords('${fromId}','${toId}')">کپی مختصات</button><button class="btn" onclick="closeModal()">بستن</button></div><p class="note">بازشدن مستقیم برنامه‌ها به پشتیبانی لینک توسط گوشی و نسخه نصب‌شده آن برنامه بستگی دارد.</p>`)}
+function openGoogleRoute(a,b){let x=getPlace(a),y=getPlace(b);window.open(`https://www.google.com/maps/dir/?api=1&origin=${x.lat},${x.lon}&destination=${y.lat},${y.lon}&travelmode=driving`,"_blank")}
+function openNeshanRoute(a,b){let x=getPlace(a),y=getPlace(b);window.open(`https://neshan.org/maps?destination=${y.lat},${y.lon}`,"_blank")}
+function openBaladRoute(a,b){let y=getPlace(b);window.open(`https://balad.ir/`,"_blank");toast("بلد باز شد؛ مقصد را با مختصات مقصد جست‌وجو کن: "+y.lat+", "+y.lon)}
+function copyCoords(a,b){let x=getPlace(a),y=getPlace(b),s=`مبدأ ${x.name}: ${x.lat},${x.lon}\nمقصد ${y.name}: ${y.lat},${y.lon}`;if(navigator.clipboard?.writeText)navigator.clipboard.writeText(s).then(()=>toast("مختصات کپی شد.")).catch(()=>toast(s));else toast(s)}
 render();
 </script>
-</body>
-</html>
+</body></html>
