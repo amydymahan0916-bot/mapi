@@ -26,6 +26,37 @@
 .empty{padding:25px 12px;text-align:center;color:var(--muted);font-size:11px;line-height:2}
 footer{text-align:center;color:#648272;font-size:10px;margin-top:24px}
 @media(max-width:650px){.wrap{padding:12px 10px 30px}.grid{grid-template-columns:1fr}.folder-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero{padding:15px}.stats{gap:6px}.stat{padding:10px 8px}.stat b{font-size:18px}.card-actions .btn{font-size:10px;padding:9px 7px}}
+
+/* MAHAN MAP LIGHT THEME */
+:root{--bg:#f4f7f5;--panel:#ffffff;--panel2:#ffffff;--line:#dce7e0;--green:#159957;--mint:#087a45;--text:#17251d;--muted:#65776c;--danger:#c43e3e;--gold:#9a6b08}
+body{background:linear-gradient(180deg,#edf7f0 0,#f7f9f8 260px,#f4f7f5 100%);color:var(--text)}
+.logo{background:linear-gradient(145deg,#4be69a,#159957);color:#06351d;box-shadow:0 8px 24px #15995725}
+.pill{border-color:#b8dfc8;color:#087a45;background:#effaf3}
+.hero{background:linear-gradient(125deg,#e0f6e9,#f7fcf8 78%);border-color:#c8e7d4}
+.hero p{color:#526b5b}
+.stat,.card,.panel{background:#fff;border-color:#e0e9e3;box-shadow:0 4px 18px #163b2410}
+.stat b{color:#12834d}
+.tab{background:#fff;color:#64766b;border-color:#dce7e0}
+.tab.active{background:#e5f7ec;border-color:#9bd8b2;color:#087a45}
+.btn{background:#f5f8f6;color:#26382d;border-color:#dce7e0}
+.btn.primary{background:#159957;color:#fff;border-color:#159957}
+.btn.ghost{background:transparent}
+.btn.danger{color:#b52e2e;border-color:#efcaca;background:#fff5f5}
+.tag{background:#e8f8ee;color:#087a45}
+.folder{background:#f8fbf9;border-color:#dfe9e2;color:#1d3025}
+.folder small,.muted,.route-sub,.point-coord{color:#687b70}
+.point-row{border-color:#e7eee9}
+.field input,.field select{background:#fff;border-color:#d6e2da;color:#17251d}
+.coord{background:#eef8f1;color:#087a45}
+.notice{background:#fff8e6;border-color:#f0dfae;color:#74520c}
+.modal{background:#fff;border-color:#dce7e0;box-shadow:0 20px 70px #17332225}
+.modal p{color:#65776c}
+#pickMap{border-color:#dce7e0}
+.empty{color:#718278}
+footer{color:#819489}
+.route .status{color:#718278}
+.route .status.ready{color:#12834d}
+
 </style>
 </head>
 <body>
@@ -59,7 +90,7 @@ try{db=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){db=null}
 if(!db||!Array.isArray(db.places))db={places:initialPlaces.map(p=>({...p,lat:null,lon:null,folder:"saved"})),routes:initialRoutes.map((r,i)=>({...r,id:"r"+(i+1),name:"مسیر "+(i+1)})),folders:defaultFolders};
 db.folders=db.folders?.length?db.folders:defaultFolders;
 db.routes=db.routes||[];db.places=db.places||[];
-let page="home",mapObj=null,pickMarker=null,pickTarget=null,pickLatLng=null;
+let page="home",mapObj=null,pickMarker=null,pickTarget=null,pickLatLng=null,placeDraft=null;
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const getPlace=id=>db.places.find(p=>p.id===id);
@@ -125,7 +156,19 @@ function getGPSForForm(){if(!navigator.geolocation)return toast("GPS در این
 function geoError(e){toast(e.code===1?"اجازه مکان‌یابی داده نشد.":e.code===2?"موقعیت پیدا نشد؛ GPS را روشن کن.":"دریافت GPS زمان‌بر شد؛ دوباره تلاش کن.")}
 function currentLocation(){if(!navigator.geolocation)return toast("GPS پشتیبانی نمی‌شود.");toast("در حال پیدا کردن موقعیت فعلی…");navigator.geolocation.getCurrentPosition(pos=>{let lat=pos.coords.latitude,lon=pos.coords.longitude;showMap(lat,lon,`موقعیت فعلی من · دقت حدود ${Math.round(pos.coords.accuracy)} متر`,false)},geoError,{enableHighAccuracy:true,timeout:25000,maximumAge:0})}
 function openPlaceMap(id){let p=getPlace(id);if(!located(p))return toast("این مکان هنوز مختصات ندارد.");showMap(+p.lat,+p.lon,p.name,false)}
-function openPicker(id){let lat=+$("pLat").value,lon=+$("pLon").value;let has=Number.isFinite(lat)&&Number.isFinite(lon)&&$("pLat").value!==""&&$("pLon").value!=="";showMap(has?lat:32.4,has?lon:53.7,"انتخاب محل روی نقشه",true,id)}
+function openPicker(id){
+ const latText=$("pLat").value.trim(),lonText=$("pLon").value.trim();
+ const lat=Number(latText),lon=Number(lonText);
+ const has=latText!==""&&lonText!==""&&Number.isFinite(lat)&&Number.isFinite(lon);
+ placeDraft={
+  id:id||"",
+  name:$("pName").value,
+  folder:$("pFolder").value,
+  lat:has?lat:null,
+  lon:has?lon:null
+ };
+ showMap(has?lat:32.4,has?lon:53.7,"انتخاب محل روی نقشه",true,id);
+}
 function showMap(lat,lon,title,picking,targetId){
  pickTarget=targetId||null;pickLatLng=picking?{lat, lng:lon}:null;
  openModal(`<h3>${esc(title)}</h3><p>${picking?"روی نقشه بزن تا نشانگر در همان نقطه قرار بگیرد؛ می‌توانی نشانگر را هم جابه‌جا کنی.":"موقعیت روی نقشه نمایش داده شده است."}</p><div id="pickMap"></div><div class="coord" id="mapCoord">${lat.toFixed(6)}, ${lon.toFixed(6)}</div><div class="modal-actions">${picking?'<button class="btn primary" onclick="usePickedLocation()">ثبت این نقطه</button>':''}<button class="btn" onclick="openExternalMap(${lat},${lon})">بازکردن در نشان</button><button class="btn" onclick="openGoogle(${lat},${lon})">Google Maps</button><button class="btn" onclick="closeModal()">بستن</button></div>`);
@@ -137,7 +180,18 @@ function showMap(lat,lon,title,picking,targetId){
  if(picking){mapObj.on("click",e=>{pickMarker.setLatLng(e.latlng);update(e.latlng)});pickMarker.on("dragend",()=>update(pickMarker.getLatLng()));}
  setTimeout(()=>mapObj&&mapObj.invalidateSize(),250);
 }
-function usePickedLocation(){if(!pickLatLng)return toast("اول یک نقطه روی نقشه انتخاب کن.");$("pLat").value=pickLatLng.lat.toFixed(7);$("pLon").value=pickLatLng.lng.toFixed(7);closeModal();toast("مختصات به فرم مکان منتقل شد؛ ذخیره مکان را بزن.")}
+function usePickedLocation(){
+ if(!pickLatLng)return toast("اول یک نقطه روی نقشه انتخاب کن.");
+ const chosen={lat:Number(pickLatLng.lat.toFixed(7)),lon:Number(pickLatLng.lng.toFixed(7))};
+ const draft=placeDraft||{id:pickTarget||"",name:"",folder:"saved",lat:null,lon:null};
+ draft.lat=chosen.lat;draft.lon=chosen.lon;
+ closeModal();
+ placeDraft=null;
+ placeForm(draft);
+ $("pLat").value=chosen.lat.toFixed(7);
+ $("pLon").value=chosen.lon.toFixed(7);
+ toast("موقعیت به فرم برگشت؛ حالا «ذخیره مکان» را بزن.");
+}
 function openExternalMap(lat,lon){window.open("https://neshan.org/maps?lat="+encodeURIComponent(lat)+"&lng="+encodeURIComponent(lon)," _blank")}
 function openGoogle(lat,lon){window.open("https://www.google.com/maps?q="+lat+","+lon,"_blank")}
 function chooseNavigation(fromId,toId){let a=getPlace(fromId),b=getPlace(toId);if(!located(a)||!located(b))return toast("ابتدا مختصات مبدأ و مقصد را ثبت کن.");openModal(`<h3>مسیریابی</h3><p>${esc(a.name)} ← ${esc(b.name)}</p><div class="coord">مبدأ: ${coords(a)}<br>مقصد: ${coords(b)}</div><div class="modal-actions"><button class="btn primary" onclick="openGoogleRoute('${fromId}','${toId}')">Google Maps</button><button class="btn" onclick="openNeshanRoute('${fromId}','${toId}')">نشان</button><button class="btn" onclick="openBaladRoute('${fromId}','${toId}')">بلد</button><button class="btn" onclick="copyCoords('${fromId}','${toId}')">کپی مختصات</button><button class="btn" onclick="closeModal()">بستن</button></div><p class="note">بازشدن مستقیم برنامه‌ها به پشتیبانی لینک توسط گوشی و نسخه نصب‌شده آن برنامه بستگی دارد.</p>`)}
